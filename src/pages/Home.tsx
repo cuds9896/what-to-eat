@@ -1,4 +1,4 @@
-export default function Home() {
+export const Home: React.FC = () => {
   return (
     <div className="flex h-screen">
       <div className="flex-1 bg-gray-100 p-8">
@@ -45,4 +45,4 @@ export default function Home() {
       </div>
     </div>
   );
-}
+};

@@ -1,16 +1,19 @@
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setUsers } from "../store/user";
+import { useSocket } from "../context/SocketProvider";
 
 export const LoginPopup: React.FC = () => {
   const dispatch = useDispatch();
   const [name, setName] = useState("");
+  const socket = useSocket();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     dispatch(
       setUsers({ usersList: [{ username: name, recipes: [], votes: [] }] }),
     );
+    socket.sendJsonMessage({ username: name });
   };
 
   return (
