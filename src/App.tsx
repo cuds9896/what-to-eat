@@ -5,23 +5,23 @@ import type { UsersStore } from "./types/store/UserStore";
 import type { StoreInterfaces } from "./types/store/StoreInterfaces";
 import UserStatusBar from "./components/userStatusBar";
 import { BrowserRouter, Route, Routes } from "react-router";
-import { Home } from "./pages";
+import { Home, Ingredients, Recipes } from "./pages";
 
 function App() {
   const users: UsersStore = useSelector((state: StoreInterfaces) => state.user);
   return (
-    <>
+    <BrowserRouter>
       <Header />
       {(!users || users.usersList[0].username === "") && <LoginPopup />}
-      <BrowserRouter>
+      <div className="mt-16">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/recipes" element={<div>Recipes Page</div>} />
-          <Route path="/ingredients" element={<div>Ingredients Page</div>} />
+          <Route path="/recipes" element={<Recipes />} />
+          <Route path="/ingredients" element={<Ingredients />} />
         </Routes>
-      </BrowserRouter>
+      </div>
       {users && <UserStatusBar users={users} />}
-    </>
+    </BrowserRouter>
   );
 }
 

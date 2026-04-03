@@ -16,19 +16,19 @@ export const Header = () => {
           Menu
         </a>
       </header>
-      <ul
+      <nav
         className={`absolute w-34 top-16 transition duration-200 my-2 -right-34 ${!menuOpen ? "" : "-translate-x-30"}`}
       >
-        <li>
-          <SidebarButton className="bg-red-500">Home</SidebarButton>
-        </li>
-        <li>
-          <SidebarButton className="bg-blue-500">Recipes</SidebarButton>
-        </li>
-        <li>
-          <SidebarButton className="bg-green-500">Ingredients</SidebarButton>
-        </li>
-      </ul>
+        <SidebarButton className="bg-red-500" destination="">
+          Home
+        </SidebarButton>
+        <SidebarButton className="bg-blue-500" destination="recipes">
+          Recipes
+        </SidebarButton>
+        <SidebarButton className="bg-green-500" destination="ingredients">
+          Ingredients
+        </SidebarButton>
+      </nav>
     </>
   );
 };
