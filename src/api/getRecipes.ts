@@ -2,7 +2,7 @@ import type { recipeType } from "../types/recipeType";
 
 async function getRecipes(): Promise<recipeType[]> {
   try {
-    const response = await fetch("/api/recipes", {
+    const response = await fetch("http://localhost:3000/getRecipes", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

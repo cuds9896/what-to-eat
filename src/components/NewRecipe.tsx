@@ -21,7 +21,7 @@ export const newRecipe: React.FC<{
       (ingredient) => ingredient.name && ingredient.quantity,
     );
     const newRecipe: recipeType = {
-      name: formData.get("recipeName") as string,
+      title: formData.get("recipeName") as string,
       ingredients: newIngredientsList,
     };
     onSubmit(newRecipe);
@@ -43,9 +43,9 @@ export const newRecipe: React.FC<{
         <label className="block text-gray-700 mb-2">Recipe Name</label>
         <input
           type="text"
-          value={recipeToEdit.name}
+          value={recipeToEdit.title}
           onChange={(e) => {
-            setRecipeToEdit((prev) => ({ ...prev, name: e.target.value }));
+            setRecipeToEdit((prev) => ({ ...prev, title: e.target.value }));
           }}
           name="recipeName"
           className="w-full px-4 py-2 border border-gray-300 rounded-lg mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500"

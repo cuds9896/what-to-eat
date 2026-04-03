@@ -1,8 +1,8 @@
 import type { recipeType } from "../types/recipeType";
 
-async function addRecipe(recipe: recipeType): Promise<void> {
+async function addRecipe(recipe: recipeType): Promise<Response> {
   try {
-    const response = await fetch("/api/recipes", {
+    const response = await fetch("http://localhost:3000/addRecipe", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -13,6 +13,7 @@ async function addRecipe(recipe: recipeType): Promise<void> {
     if (!response.ok) {
       throw new Error("Failed to add recipe");
     }
+    return response;
   } catch (error) {
     console.error("Error adding recipe:", error);
     throw error;

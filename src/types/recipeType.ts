@@ -1,7 +1,7 @@
 import type { ingredientType } from "./ingredientType";
 
 export interface recipeType {
-  name: string;
+  title: string;
   ingredients: ingredientType[];
   instructions?: string;
   link?: string;

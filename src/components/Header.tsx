@@ -19,13 +19,31 @@ export const Header = () => {
       <nav
         className={`absolute w-34 top-16 transition duration-200 my-2 -right-34 ${!menuOpen ? "" : "-translate-x-30"}`}
       >
-        <SidebarButton className="bg-red-500" destination="">
+        <SidebarButton
+          className="bg-red-500"
+          destination=""
+          onNavigate={() => {
+            setMenuOpen(false);
+          }}
+        >
           Home
         </SidebarButton>
-        <SidebarButton className="bg-blue-500" destination="recipes">
+        <SidebarButton
+          className="bg-blue-500"
+          destination="recipes"
+          onNavigate={() => {
+            setMenuOpen(false);
+          }}
+        >
           Recipes
         </SidebarButton>
-        <SidebarButton className="bg-green-500" destination="ingredients">
+        <SidebarButton
+          className="bg-green-500"
+          destination="ingredients"
+          onNavigate={() => {
+            setMenuOpen(false);
+          }}
+        >
           Ingredients
         </SidebarButton>
       </nav>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getRecipes } from "../api";
+import { addRecipe, getRecipes } from "../api";
 import type { recipeType } from "../types/recipeType";
 import NewRecipe from "../components/NewRecipe";
 import RecipeCard from "../components/RecipeCard";
@@ -20,6 +20,29 @@ export const Recipes: React.FC = () => {
       });
   }, []);
 
+  const handleSubmitRecipe = (recipe: recipeType) => {
+    if (recipeNumber === -1) {
+      addRecipe(recipe).then((res) => {
+        if (res.ok) {
+          setRecipes([...recipes, recipe]);
+          console.log("Recipe added successfully");
+        } else {
+          console.error("Failed to add recipe");
+        }
+        setShowAddRecipePopup(false);
+        setRecipeToEdit(null);
+        setRecipeNumber(-1);
+      });
+    } else {
+      const tempRecipes = [...recipes];
+      tempRecipes[recipeNumber] = recipe;
+      setRecipes(tempRecipes);
+      setShowAddRecipePopup(false);
+      setRecipeToEdit(null);
+      setRecipeNumber(-1);
+    }
+  };
+
   return (
     <div className="p-8">
       <h1 className="text-3xl font-bold mb-6">Recipes</h1>
@@ -27,7 +50,7 @@ export const Recipes: React.FC = () => {
         Here you can browse and manage your recipes.
       </p>
       <div className="bg-white rounded-lg shadow-md p-6">
-        <div className="min-h-64 overflow-y-auto mb-4 max-h-full">
+        <div className="mb-4 h-96 overflow-y-scroll">
           {recipes.length === 0 ? (
             <p className="text-gray-600">No recipes found. Add some!</p>
           ) : (
@@ -58,18 +81,9 @@ export const Recipes: React.FC = () => {
         <div className="fixed inset-0 flex items-center justify-center">
           <div className="bg-black opacity-50 absolute inset-0"></div>
           <NewRecipe
-            recipe={recipeToEdit || { name: "", ingredients: [] }}
+            recipe={recipeToEdit || { title: "", ingredients: [] }}
             onSubmit={(recipe) => {
-              const tempRecipes = [...recipes];
-              if (recipeNumber === -1) {
-                tempRecipes.push(recipe);
-              } else {
-                tempRecipes[recipeNumber] = recipe;
-              }
-              setRecipes(tempRecipes);
-              setShowAddRecipePopup(false);
-              setRecipeToEdit(null);
-              setRecipeNumber(-1);
+              handleSubmitRecipe(recipe);
             }}
           />
         </div>
