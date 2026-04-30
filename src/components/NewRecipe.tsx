@@ -1,11 +1,13 @@
 import { useState } from "react";
 import type { recipeType } from "../types/recipeType";
 import type { ingredientType, unitType } from "../types/ingredientType";
+import { CircleX } from "lucide-react";
 
 export const newRecipe: React.FC<{
   recipe: recipeType;
   onSubmit: (recipe: recipeType) => void;
-}> = ({ recipe, onSubmit }) => {
+  onClose: () => void;
+}> = ({ recipe, onSubmit, onClose }) => {
   const [ingredientsList, setIngredientsList] = useState<ingredientType[]>(
     recipe.ingredients || [],
   );
@@ -21,6 +23,7 @@ export const newRecipe: React.FC<{
       (ingredient) => ingredient.name && ingredient.quantity,
     );
     const newRecipe: recipeType = {
+      id: recipe.id,
       title: formData.get("recipeName") as string,
       ingredients: newIngredientsList,
     };
@@ -29,10 +32,15 @@ export const newRecipe: React.FC<{
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-2xl z-10">
-      <h2 className="text-xl font-semibold mb-4">Add New Recipe</h2>
-      <p className="text-gray-600 ">
-        Use the form below to add a new recipe to your collection.
-      </p>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-semibold mb-4">Add New Recipe</h2>
+        <button
+          className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition"
+          onClick={onClose}
+        >
+          <CircleX></CircleX>
+        </button>
+      </div>
       <div className="grow border-t border-gray-400 my-4"></div>
       <form
         className="mt-4"
@@ -116,7 +124,15 @@ export const newRecipe: React.FC<{
             onClick={() => {
               setIngredientsList([
                 ...ingredientsList,
-                { name: "", quantity: "", unit: "g" as unitType },
+                {
+                  name: "",
+                  quantity: "",
+                  unit: "g" as unitType,
+                  carbs: 0,
+                  protein: 0,
+                  fat: 0,
+                  category: "",
+                },
               ]);
             }}
           >
