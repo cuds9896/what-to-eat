@@ -1,39 +1,24 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { getIngredients } from "../api/getIngredients";
 import type { ingredientType } from "../types/ingredientType";
 import { sortArrayOnField } from "../utils/sortArrayOnField";
-import type { categoryType } from "../types/categoryType";
+import { IngredientDraggable } from "../components/IngredientDraggable";
+import { IngredientCategory } from "../components/IngredientCategory";
+import { DragDropProvider } from "@dnd-kit/react";
+import { move } from "@dnd-kit/helpers";
 
 export const Ingredients: React.FC = () => {
   const ingredientsList = useRef<ingredientType[]>([]);
   const [newCategoryPopup, setNewCategoryPopup] = useState<boolean>(false);
-  const [categories, setCategories] = useState<categoryType[]>([]);
-  const [tableRows, setTableRows] = useState<(ingredientType | string)[]>([]);
+  const [displayCategories, setDisplayCategories] = useState<
+    Record<string, string[]>
+  >({});
 
   useEffect(() => {
     getIngredients()
       .then((ingredients) => {
-        console.log("Fetched ingredients:", ingredients);
         ingredientsList.current = sortArrayOnField(ingredients, "category");
         setIngredientCategories();
-        //build list of table rows with categories as headers and ingredients as rows under their respective categories
-        let tempList: (ingredientType | string)[] = [];
-        let emptyCategories: string[] = [];
-        tempList.push(
-          ...ingredientsList.current.filter(
-            (ingredient) => !ingredient.category || ingredient.category === "",
-          ),
-        );
-        categories.forEach((category) => {
-          if (category.ingredients.length > 0) {
-            tempList.push(category.name);
-            tempList.push(...category.ingredients);
-          } else {
-            emptyCategories.push(category.name);
-          }
-        });
-        tempList.push(...emptyCategories);
-        setTableRows(tempList);
       })
       .catch((error) => {
         console.error("Error fetching ingredients:", error);
@@ -41,30 +26,37 @@ export const Ingredients: React.FC = () => {
   }, []);
 
   const setIngredientCategories = () => {
-    let categoriesList = [] as categoryType[];
-    ((categoriesList = ingredientsList.current.reduce((acc, ingredient) => {
-      let category: categoryType;
-      if (acc.find((cat) => cat.name === ingredient.category)) {
-        category = acc.find((cat) => cat.name === ingredient.category)!;
-        category.ingredients.push(ingredient);
-      } else {
-        category = {
-          name: ingredient.category,
-          ingredients: [ingredient],
-        };
-        acc.push(category);
+    let categories: Record<string, string[]> = { Uncategorized: [] };
+    ingredientsList.current.forEach((ingredient) => {
+      if (!ingredient.category) {
+        categories["Uncategorized"].push(ingredient.name);
+        return;
       }
-      return acc;
-    }, [] as categoryType[])),
-      //create list of unique categories from ingredients list
-      setCategories(categoriesList));
+      if (
+        displayCategories[ingredient.category as keyof typeof displayCategories]
+      ) {
+        categories[ingredient.category as keyof typeof categories].push(
+          ingredient.name,
+        );
+      } else {
+        categories[ingredient.category as keyof typeof categories] = [
+          ingredient.name,
+        ];
+      }
+    });
+    setDisplayCategories(categories);
   };
 
   const handleAddCategory = (e: React.FormEvent<HTMLFormElement>) => {
     const formData = new FormData(e.currentTarget);
     const categoryName = formData.get("categoryName") as string;
-    setCategories((prev) => [...prev, { name: categoryName, ingredients: [] }]);
-    setTableRows((prev) => [...prev, categoryName]);
+    if (displayCategories[categoryName as keyof typeof displayCategories]) {
+      return;
+    }
+    setDisplayCategories((prev) => ({
+      ...prev,
+      [categoryName]: [],
+    }));
   };
 
   return (
@@ -74,43 +66,37 @@ export const Ingredients: React.FC = () => {
         <p className="text-gray-700 mb-6">
           Create categories for your ingredients and manage macros here
         </p>
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <table className="mb-4">
-            <thead>
-              <tr>
-                <th className="text-left py-2 px-4 border-b">Name</th>
-              </tr>
-            </thead>
-            <tbody>
-              {tableRows.map((row, index) => {
-                if (typeof row === "string") {
-                  return (
-                    <tr key={index}>
-                      <td className="py-2 px-4 border-b font-bold bg-gray-200">
-                        {row}
-                      </td>
-                    </tr>
-                  );
-                } else {
-                  return (
-                    <tr key={index}>
-                      <td className="py-2 px-4 border-b">{row.name}</td>
-                    </tr>
-                  );
-                }
-              })}
-            </tbody>
-          </table>
-
-          <button
-            className="mt-4 w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 rounded-lg transition"
-            onClick={() => {
-              setNewCategoryPopup(true);
+        <div className="bg-white rounded-lg shadow-md p-6 flex flex-row gap-6">
+          <DragDropProvider
+            onDragOver={(event) => {
+              setDisplayCategories((prev) => move(prev, event));
             }}
           >
-            Add Category
-          </button>
+            {Object.entries(displayCategories).map(([column, ingredients]) => (
+              <IngredientCategory key={column} id={column}>
+                <h3 className="text-xl font-semibold mb-4">
+                  {column || "Uncategorized"}
+                </h3>
+                {ingredients.map((ingredient, index) => (
+                  <IngredientDraggable
+                    key={ingredient}
+                    id={ingredient}
+                    index={index}
+                    category={column}
+                  />
+                ))}
+              </IngredientCategory>
+            ))}
+          </DragDropProvider>
         </div>
+        <button
+          className="mt-4 w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 rounded-lg transition"
+          onClick={() => {
+            setNewCategoryPopup(true);
+          }}
+        >
+          Add Category
+        </button>
       </div>
       {newCategoryPopup && (
         <div className="fixed inset-0 flex items-center justify-center">

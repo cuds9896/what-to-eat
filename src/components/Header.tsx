@@ -17,7 +17,7 @@ export const Header = () => {
         </a>
       </header>
       <nav
-        className={`absolute w-34 top-16 transition duration-200 my-2 -right-34 ${!menuOpen ? "" : "-translate-x-30"}`}
+        className={`fixed w-36 top-16 transition duration-200 my-2 pl-2 -right-34 max-w-screen overflow-hidden ${!menuOpen ? "" : "-translate-x-30"}`}
       >
         <SidebarButton
           className="bg-red-500"
