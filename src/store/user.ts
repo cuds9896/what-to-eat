@@ -4,6 +4,7 @@ import type { UsersStore } from "../types/store/UserStore";
 const initialState: UsersStore = {
   usersList: [
     {
+      uuid: "",
       username: "",
       recipes: [],
       votes: [],
@@ -19,7 +20,7 @@ const users = createSlice({
       state.usersList = initialState.usersList;
     },
     setUsers: (state, action: PayloadAction<UsersStore>) => {
-      console.log("Setting users in store:", action.payload);
+      console.log("Setting users in store:", action.payload.usersList);
       state.usersList = action.payload.usersList;
     },
   },

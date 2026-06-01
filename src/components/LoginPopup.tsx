@@ -1,24 +1,18 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { setUsers } from "../store/user";
 import { useSocket } from "../context/SocketProvider";
 
 export const LoginPopup: React.FC = () => {
-  const dispatch = useDispatch();
   const [name, setName] = useState("");
   const socket = useSocket();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(
-      setUsers({ usersList: [{ username: name, recipes: [], votes: [] }] }),
-    );
     socket.sendJsonMessage({ username: name });
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center">
-      <div className="bg-white rounded-lg shadow-lg p-8 w-96 z-10">
+    <div className="fixed inset-0 flex items-center justify-center z-20">
+      <div className="bg-white rounded-lg shadow-lg p-8 w-96 z-5">
         <h2 className="text-2xl font-bold mb-6">Enter your name</h2>
         <form onSubmit={handleSubmit}>
           <input

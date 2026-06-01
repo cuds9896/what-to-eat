@@ -1,11 +1,12 @@
 import type { recipeType } from "../recipeType";
 
 export interface UsersStore {
-  usersList: [
-    {
-      username: string;
-      recipes: recipeType[];
-      votes: number[];
-    },
-  ];
+  usersList: User[];
+}
+
+export interface User {
+  uuid: string;
+  username: string;
+  recipes: recipeType[];
+  votes: number[];
 }

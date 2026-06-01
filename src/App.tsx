@@ -5,7 +5,7 @@ import type { UsersStore } from "./types/store/UserStore";
 import type { StoreInterfaces } from "./types/store/StoreInterfaces";
 import UserStatusBar from "./components/userStatusBar";
 import { BrowserRouter, Route, Routes } from "react-router";
-import { Home, Ingredients, Recipes } from "./pages";
+import { Home, Ingredients, Recipes, Vote } from "./pages";
 
 function App() {
   const users: UsersStore = useSelector((state: StoreInterfaces) => state.user);
@@ -18,6 +18,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/recipes" element={<Recipes />} />
           <Route path="/ingredients" element={<Ingredients />} />
+          <Route path="/vote" element={<Vote />} />
         </Routes>
       </div>
       {users && <UserStatusBar users={users} />}

@@ -7,7 +7,8 @@ const userStatusBar = ({ users }: { users: UsersStore | undefined }) => {
         <span className="text-sm text-gray-600">Not logged in</span>
       ) : (
         <span className="text-sm text-gray-600">
-          Logged in as {users.usersList[0].username}
+          Logged in as {users.usersList[0].username} | {users.usersList.length}{" "}
+          user(s) online
         </span>
       )}
     </div>

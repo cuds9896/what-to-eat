@@ -5,21 +5,22 @@ import { CollisionPriority } from "@dnd-kit/abstract";
 export function IngredientCategory({
   children,
   id,
+  className = "",
 }: {
   children: React.ReactNode;
   id: string;
+  className?: string;
 }) {
-  const { ref, isDropTarget } = useDroppable({
+  const { ref } = useDroppable({
     id: id,
     type: "category",
     accept: ["ingredient", "category"],
     collisionPriority: CollisionPriority.Low,
   });
-  const style = isDropTarget ? "bg-blue-100" : "";
 
   return (
     <div
-      className={`Column bg-gray-100 rounded-lg p-4 flex flex-col items-center gap-2 w-full mx-2 ${style}`}
+      className={`Column rounded-lg p-4 flex flex-col items-center gap-2 w-full mx-2 ${className}`}
       ref={ref}
     >
       {children}

@@ -48,7 +48,7 @@ export const Recipes: React.FC = () => {
   }, [recipes]);
 
   const filterRecipes = (ingredientName: string) => {
-    if (ingredientName === "") {;
+    if (ingredientName === "") {
       return recipes;
     } else {
       const filtered = recipes.filter((recipe) => {
@@ -99,13 +99,29 @@ export const Recipes: React.FC = () => {
     });
   };
 
+  const handleSortChange = (field: keyof recipeType) => {
+    setFilteredRecipes(sortArrayOnField([...filteredRecipes], field));
+  };
+
   return (
     <div className="p-8">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold mb-6">Recipes</h1>
-        {recipes.length > 0 && (
+      <h1 className="text-3xl font-bold">Recipes</h1>
+      {recipes.length > 0 && (
+        <div className="flex justify-end items-center gap-4 mb-2">
+          <h3 className="text-gray-700">Sort by:</h3>
           <select
-            className="mb-4 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onChange={(e) => {
+              handleSortChange(e.target.value as keyof recipeType);
+            }}
+          >
+            <option value="title">Title</option>
+            <option value="id">Date Added</option>
+            <option value="ingredients">Number of Ingredients</option>
+          </select>
+          <h3 className="text-gray-700">Filter:</h3>
+          <select
+            className="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             onChange={(e) => {
               setFilteredRecipes(filterRecipes(e.target.value));
             }}
@@ -117,8 +133,8 @@ export const Recipes: React.FC = () => {
               </option>
             ))}
           </select>
-        )}
-      </div>
+        </div>
+      )}
       <div className="bg-white rounded-lg shadow-md p-6">
         <div className="mb-4 h-100% overflow-y-scroll">
           {filteredRecipes.length === 0 ? (

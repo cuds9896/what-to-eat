@@ -6,4 +6,8 @@ export interface recipeType {
   ingredients: ingredientType[];
   instructions?: string;
   link?: string;
+  added?: Date;
+  prepTime?: number;
+  cookTime?: number;
+  timesVoted?: number;
 }

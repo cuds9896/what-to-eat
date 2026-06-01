@@ -6,6 +6,8 @@ import { IngredientDraggable } from "../components/IngredientDraggable";
 import { IngredientCategory } from "../components/IngredientCategory";
 import { DragDropProvider } from "@dnd-kit/react";
 import { move } from "@dnd-kit/helpers";
+import { saveIngredients } from "../api/saveIngredients";
+import { categoryColours } from "../constants/categoryColours";
 
 export const Ingredients: React.FC = () => {
   const ingredientsList = useRef<ingredientType[]>([]);
@@ -13,11 +15,15 @@ export const Ingredients: React.FC = () => {
   const [displayCategories, setDisplayCategories] = useState<
     Record<string, string[]>
   >({});
+  const [initialCategories, setInitialCategories] = useState<
+    Record<string, string[]>
+  >({});
 
   useEffect(() => {
     getIngredients()
       .then((ingredients) => {
         ingredientsList.current = sortArrayOnField(ingredients, "category");
+        console.log(ingredientsList.current);
         setIngredientCategories();
       })
       .catch((error) => {
@@ -32,9 +38,7 @@ export const Ingredients: React.FC = () => {
         categories["Uncategorized"].push(ingredient.name);
         return;
       }
-      if (
-        displayCategories[ingredient.category as keyof typeof displayCategories]
-      ) {
+      if (categories[ingredient.category as keyof typeof displayCategories]) {
         categories[ingredient.category as keyof typeof categories].push(
           ingredient.name,
         );
@@ -44,6 +48,7 @@ export const Ingredients: React.FC = () => {
         ];
       }
     });
+    setInitialCategories(categories);
     setDisplayCategories(categories);
   };
 
@@ -66,27 +71,33 @@ export const Ingredients: React.FC = () => {
         <p className="text-gray-700 mb-6">
           Create categories for your ingredients and manage macros here
         </p>
-        <div className="bg-white rounded-lg shadow-md p-6 flex flex-row gap-6">
+        <div className="bg-white rounded-lg shadow-md p-6 flex flex-wrap gap-6 overflow-y-scroll">
           <DragDropProvider
             onDragOver={(event) => {
               setDisplayCategories((prev) => move(prev, event));
             }}
           >
-            {Object.entries(displayCategories).map(([column, ingredients]) => (
-              <IngredientCategory key={column} id={column}>
-                <h3 className="text-xl font-semibold mb-4">
-                  {column || "Uncategorized"}
-                </h3>
-                {ingredients.map((ingredient, index) => (
-                  <IngredientDraggable
-                    key={ingredient}
-                    id={ingredient}
-                    index={index}
-                    category={column}
-                  />
-                ))}
-              </IngredientCategory>
-            ))}
+            {Object.entries(displayCategories).map(
+              ([column, ingredients], catIndex) => (
+                <IngredientCategory
+                  key={column}
+                  id={column}
+                  className={`${categoryColours[catIndex]} max-w-72 h-80 overflow-y-scroll`}
+                >
+                  <h3 className="text-xl font-semibold mb-4">
+                    {column || "Uncategorized"}
+                  </h3>
+                  {ingredients.map((ingredient, index) => (
+                    <IngredientDraggable
+                      key={ingredient}
+                      id={ingredient}
+                      index={index}
+                      category={column}
+                    />
+                  ))}
+                </IngredientCategory>
+              ),
+            )}
           </DragDropProvider>
         </div>
         <button
@@ -96,6 +107,20 @@ export const Ingredients: React.FC = () => {
           }}
         >
           Add Category
+        </button>
+        <button
+          className="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-lg transition disabled:bg-gray-400"
+          onClick={() => {
+            saveIngredients(displayCategories).then(() => {
+              setInitialCategories(displayCategories);
+            });
+          }}
+          disabled={
+            JSON.stringify(displayCategories) ===
+            JSON.stringify(initialCategories)
+          }
+        >
+          Save Changes
         </button>
       </div>
       {newCategoryPopup && (

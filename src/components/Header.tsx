@@ -5,7 +5,7 @@ export const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   return (
     <>
-      <header className="flex items-center justify-between py-4 px-6 bg-red-400 shadow-md absolute top-0 right-0 left-0">
+      <header className="flex items-center justify-between py-4 px-6 bg-red-400 shadow-md absolute top-0 right-0 left-0 z-10">
         <h1 className="text-2xl font-bold text-gray-800">What to Eat?</h1>
         <a
           className="text-gray-600 hover:text-gray-800 mr-4 cursor-pointer bg-red-300 px-3 py-1 rounded-md transition hover:bg-red-400 border-2 border-white"
@@ -17,7 +17,7 @@ export const Header = () => {
         </a>
       </header>
       <nav
-        className={`fixed w-36 top-16 transition duration-200 my-2 pl-2 -right-34 max-w-screen overflow-hidden ${!menuOpen ? "" : "-translate-x-30"}`}
+        className={`fixed w-36 top-16 transition duration-200 my-2 pl-2 z-10 -right-34 max-w-screen overflow-hidden ${!menuOpen ? "" : "-translate-x-30"}`}
       >
         <SidebarButton
           className="bg-red-500"
@@ -45,6 +45,15 @@ export const Header = () => {
           }}
         >
           Ingredients
+        </SidebarButton>
+        <SidebarButton
+          className="bg-yellow-500"
+          destination="vote"
+          onNavigate={() => {
+            setMenuOpen(false);
+          }}
+        >
+          Vote
         </SidebarButton>
       </nav>
     </>
