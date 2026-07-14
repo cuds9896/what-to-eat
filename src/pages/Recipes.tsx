@@ -7,14 +7,13 @@ import ViewRecipe from "../components/viewRecipe";
 import { removeRecipe } from "../api/removeRecipe";
 import { sortArrayOnField } from "../utils/sortArrayOnField";
 
-export const Recipes: React.FC = () => {
+export default function Recipes() {
   const [recipes, setRecipes] = useState<recipeType[]>([]);
   const [showAddRecipePopup, setShowAddRecipePopup] = useState<boolean>(false);
   const [recipeToEdit, setRecipeToEdit] = useState<recipeType | null>(null);
   const [recipeNumber, setRecipeNumber] = useState<number>(-1);
   const [viewRecipe, setViewRecipe] = useState<recipeType | null>(null);
   const [uniqueIngredients, setUniqueIngredients] = useState<string[]>([]);
-  const [filter, setFilter] = useState<string>("");
   const [filteredRecipes, setFilteredRecipes] = useState<recipeType[]>([]);
 
   useEffect(() => {
@@ -27,10 +26,6 @@ export const Recipes: React.FC = () => {
         console.error("Error fetching recipes:", error);
       });
   }, []);
-
-  useEffect(() => {
-    setFilteredRecipes(sortArrayOnField(filterRecipes(filter), "title"));
-  }, [recipes]);
 
   useEffect(() => {
     const uniqueIngredients = new Set<string>();
@@ -196,4 +191,4 @@ export const Recipes: React.FC = () => {
       )}
     </div>
   );
-};
+}

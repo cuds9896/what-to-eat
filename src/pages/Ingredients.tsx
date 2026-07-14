@@ -9,7 +9,7 @@ import { move } from "@dnd-kit/helpers";
 import { saveIngredients } from "../api/saveIngredients";
 import { categoryColours } from "../constants/categoryColours";
 
-export const Ingredients: React.FC = () => {
+export default function Ingredients() {
   const ingredientsList = useRef<ingredientType[]>([]);
   const [newCategoryPopup, setNewCategoryPopup] = useState<boolean>(false);
   const [displayCategories, setDisplayCategories] = useState<
@@ -162,4 +162,4 @@ export const Ingredients: React.FC = () => {
       )}
     </div>
   );
-};
+}

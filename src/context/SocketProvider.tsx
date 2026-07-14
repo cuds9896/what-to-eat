@@ -1,21 +1,29 @@
 import { createContext, useContext, useEffect } from "react";
-import useWebSocketImport from "react-use-websocket";
 import { useDispatch, useSelector } from "react-redux";
 import { setUsers } from "../store/user";
 import type { WebSocketPayload } from "../types/webSocket/usersPayload";
 import type { StoreInterfaces } from "../types/store/StoreInterfaces";
 import type { User, UsersStore } from "../types/store/UserStore";
+import { setVotingHostId, setVotingOpen } from "../store/page";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router";
+import { SplitButtons } from "../components/SplitButtons";
+import useWebSocketImport from "react-use-websocket";
 
 const SocketContext = createContext<any>(null);
 
 export const SocketProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
-  const useWebSocket = useWebSocketImport as any;
-  const socketState = useWebSocket.default(import.meta.env.VITE_WS_URL, {
-    share: true,
-  });
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const useWebSocket = useWebSocketImport as any;
+  const socketUrl = import.meta.env.VITE_WS_URL || "";
+  const socketQuery = "?uuid=" + "&username=";
+  const socketState = useWebSocket.default(socketUrl + "/path" + socketQuery, {
+    share: true,
+    shouldReconnect: () => false,
+  });
 
   const users: UsersStore["usersList"] = useSelector(
     (state: StoreInterfaces) => state.user.usersList,
@@ -23,13 +31,34 @@ export const SocketProvider: React.FC<{
 
   const handleSocketData = (data: any) => {
     console.log("Handling socket data:", data);
-    if (data.type === "welcome") {
-      console.log("Received welcome message:", data.message.uuid);
-    } else if (data.type === "users") {
-      console.log("Received users list:", data.message.users);
-      processUsers(data.message.users);
-    } else {
-      console.warn("Unknown message type:", data.type);
+    switch (data.type) {
+      case "update":
+        console.log("Received update list:", data.message.users);
+        processUsers(data.message.users);
+        break;
+      case "startVoting":
+        console.log("Voting session started:", data.message);
+        if (data.message.hostId !== localStorage.getItem("uuid")) {
+          toast(SplitButtons, {
+            position: "top-center",
+            autoClose: false,
+            onClose: (reason) => {
+              if (reason === "join") {
+                navigate("/vote");
+              }
+            },
+            data: {
+              hostName:
+                users.find((user) => user.uuid === data.message.hostId)
+                  ?.username || "Unknown",
+            },
+          });
+        }
+        dispatch(setVotingOpen(true));
+        dispatch(setVotingHostId(data.message.hostId));
+        break;
+      default:
+        console.warn("Unknown message type:", data.type);
     }
   };
 
@@ -56,8 +85,12 @@ export const SocketProvider: React.FC<{
       console.log("No message received yet.");
       return;
     }
-    const data = JSON.parse(socketState.lastMessage.data);
-    handleSocketData(data);
+    try {
+      const data = JSON.parse(socketState.lastMessage.data);
+      handleSocketData(data);
+    } catch (error) {
+      console.error("Failed to parse websocket message", error);
+    }
   }, [socketState.lastMessage]);
 
   return (

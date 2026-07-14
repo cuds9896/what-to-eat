@@ -2,25 +2,29 @@ import type { StoreInterfaces } from "../types/store/StoreInterfaces";
 import { useSelector } from "react-redux";
 import type { PageStore } from "../types/store/PageStore";
 import { useSocket } from "../context/SocketProvider";
+//import { useState } from "react";
 
-export const Vote: React.FC = () => {
+export default function Vote() {
   const socket = useSocket();
   const pageData: PageStore["pageData"] = useSelector(
     (state: StoreInterfaces) => state.page.pageData,
   );
+  const users = useSelector((state: StoreInterfaces) => state.user.usersList);
 
   const initiateVotingSession = () => {
     socket.sendJsonMessage({ startVoting: true });
   };
 
+  //const [votingFinished, setVotingFinished] = useState(false);
+
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">
-        Vote for Your Favorite Recipes
-      </h1>
-      <p className="mb-4">
-        Here you can vote for your favorite recipes. Stay tuned for updates!
-      </p>
+      <h1 className="text-2xl font-bold mb-4">It's Voting Time!</h1>
+      <h2>
+        Today's host:{" "}
+        {users.find((user) => user.uuid === pageData.votingHost)?.username ||
+          "Unknown"}
+      </h2>
       {!pageData.votingOpen && (
         <div className="fixed inset-0 flex items-center justify-center">
           <div className="bg-white rounded-lg shadow-lg p-8 w-96 z-10">
@@ -43,4 +47,4 @@ export const Vote: React.FC = () => {
       )}
     </div>
   );
-};
+}

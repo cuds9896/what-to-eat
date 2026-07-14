@@ -8,12 +8,10 @@ export const recipeCard: React.FC<{
   onRemove: () => void;
 }> = ({ recipe, onView, onEdit, onRemove }) => {
   return (
-    <div className="w-full max-w-sm bg-white rounded-lg shadow-md p-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">{recipe.title}</h2>
-      </div>
+    <div className="flex flex-col justify-between w-full max-w-sm bg-white rounded-lg shadow-md p-6">
+      <h2 className="text-xl font-semibold">{recipe.title}</h2>
       <div className="grow border-t border-gray-400 my-2"></div>
-      <div className="flex items-center gap-4 mb-4">
+      <div className="flex items-center justify-between gap-4 mb-4">
         <div className="flex items-center gap-1">
           <ChefHat></ChefHat>
           <p className="text-gray-600 text-sm">{recipe.prepTime || "-"}</p>
