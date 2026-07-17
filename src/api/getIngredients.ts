@@ -1,11 +1,10 @@
 import type { ingredientType } from "../types/ingredientType";
 
 async function getIngredients(): Promise<ingredientType[]> {
-  const apiBaseUrl =
-    import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
   try {
-    const response = await fetch(`${apiBaseUrl}/getIngredients`, {
+    const response = await fetch(`/api/getIngredients`, {
       method: "GET",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },

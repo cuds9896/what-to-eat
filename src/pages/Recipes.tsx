@@ -62,7 +62,6 @@ export default function Recipes() {
         if (res.ok) {
           setRecipes([...recipes, recipe]);
           setFilteredRecipes([...filteredRecipes, recipe]);
-          console.log("Recipe added successfully");
         } else {
           console.error("Failed to add recipe");
         }

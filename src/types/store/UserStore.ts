@@ -1,6 +1,7 @@
 import type { recipeType } from "../recipeType";
 
 export interface UsersStore {
+  currentUser: User;
   usersList: User[];
 }
 

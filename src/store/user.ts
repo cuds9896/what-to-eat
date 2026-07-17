@@ -1,7 +1,13 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { UsersStore } from "../types/store/UserStore";
+import type { User, UsersStore } from "../types/store/UserStore";
 
 const initialState: UsersStore = {
+  currentUser: {
+    uuid: "",
+    username: "",
+    recipes: [],
+    votes: [],
+  },
   usersList: [
     {
       uuid: "",
@@ -18,14 +24,17 @@ const users = createSlice({
   reducers: {
     clearUserStore: (state) => {
       state.usersList = initialState.usersList;
+      state.currentUser = initialState.currentUser;
     },
-    setUsers: (state, action: PayloadAction<UsersStore>) => {
-      console.log("Setting users in store:", action.payload.usersList);
-      state.usersList = action.payload.usersList;
+    setUsers: (state, action: PayloadAction<User[]>) => {
+      state.usersList = [...action.payload];
+    },
+    setCurrentUser: (state, action: PayloadAction<User>) => {
+      state.currentUser = action.payload;
     },
   },
 });
 
-export const { clearUserStore, setUsers } = users.actions;
+export const { clearUserStore, setUsers, setCurrentUser } = users.actions;
 
 export default users.reducer;

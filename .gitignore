@@ -32,3 +32,6 @@ dist-ssr
 
 # todo
 ToDo.md
+
+# certificates
+*.pem

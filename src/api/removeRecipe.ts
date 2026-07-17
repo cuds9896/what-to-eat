@@ -1,9 +1,8 @@
 async function removeRecipe(id: number): Promise<Response> {
   try {
-    const apiBaseUrl =
-      import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
-    const response = await fetch(`${apiBaseUrl}/removeRecipe`, {
+    const response = await fetch(`/api/removeRecipe`, {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },

@@ -1,11 +1,10 @@
 import type { recipeType } from "../types/recipeType";
 
 async function getRecipes(): Promise<recipeType[]> {
-  const apiBaseUrl =
-    import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
   try {
-    const response = await fetch(`${apiBaseUrl}/getRecipes`, {
+    const response = await fetch(`/api/getRecipes`, {
       method: "GET",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },

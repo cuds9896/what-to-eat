@@ -23,7 +23,6 @@ export default function Ingredients() {
     getIngredients()
       .then((ingredients) => {
         ingredientsList.current = sortArrayOnField(ingredients, "category");
-        console.log(ingredientsList.current);
         setIngredientCategories();
       })
       .catch((error) => {

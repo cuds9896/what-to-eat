@@ -1,13 +1,16 @@
 import { Outlet, Scripts, ScrollRestoration } from "react-router";
-import { SocketProvider } from "./context/SocketProvider.tsx";
+import { SocketProvider, useSocket } from "./context/SocketProvider.tsx";
 import store from "./store/index.ts";
-import { Provider, useSelector } from "react-redux";
+import { Provider, useDispatch, useSelector } from "react-redux";
 import { Header } from "./components/Header.tsx";
 import { LoginPopup } from "./components/LoginPopup.tsx";
 import { ToastContainer } from "react-toastify";
 import UserStatusBar from "./components/userStatusBar.tsx";
 import type { StoreInterfaces } from "./types/store/StoreInterfaces.ts";
 import type { UsersStore } from "./types/store/UserStore.ts";
+import { useEffect } from "react";
+import { setCurrentUser } from "./store/user.ts";
+import { me } from "./api/me.ts";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -31,11 +34,32 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   const users: UsersStore = useSelector((state: StoreInterfaces) => state.user);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    async function checkAuthentication() {
+      try {
+        const response = await me();
+        dispatch(
+          setCurrentUser({
+            uuid: response.uuid,
+            username: response.username,
+            recipes: [],
+            votes: [],
+          }),
+        );
+      } catch (error) {
+        return;
+      }
+    }
+    checkAuthentication();
+  }, []);
 
   return (
     <div className="App">
       <Header />
-      {localStorage.getItem("username") ? null : <LoginPopup />}
+      {(!users.currentUser || users.currentUser.username === "") && (
+        <LoginPopup />
+      )}
       <ToastContainer position="top-center" autoClose={5000} />
       <div className="mt-16">
         <Outlet />

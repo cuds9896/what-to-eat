@@ -1,11 +1,10 @@
 async function saveIngredients(
   categories: Record<string, string[]>,
 ): Promise<Response> {
-  const apiBaseUrl =
-    import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
   try {
-    const response = await fetch(`${apiBaseUrl}/saveIngredients`, {
+    const response = await fetch(`/api/saveIngredients`, {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
